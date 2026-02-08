@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Share Utility</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <div class="preview-panel">
+      <div class="canvas-container">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <h1 class="app-title">Social Share Utility</h1>
+
+      <div class="control-section">
+        <h3 class="section-title">Capture</h3>
+        <input id="url-input" type="text" placeholder="Enter URL (e.g. http://localhost:3000)">
+        <button id="capture-btn">Capture Screenshot</button>
+        <div class="capture-divider"><span>or</span></div>
+        <input id="upload-input" type="file" accept="image/*" class="hidden">
+        <button id="upload-btn">Upload Image</button>
+        <span id="status-text" class="status-text"></span>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Size Preset</h3>
+        <div class="preset-buttons">
+          <button data-width="1200" data-height="675">Twitter</button>
+          <button data-width="1080" data-height="1080">Square</button>
+          <button data-width="1200" data-height="627">LinkedIn</button>
+          <button data-width="1080" data-height="1350">Threads</button>
+          <button>Custom</button>
+        </div>
+        <div id="custom-size-inputs" class="hidden">
+          <input id="custom-width" type="number" value="1200">
+          <input id="custom-height" type="number" value="675">
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Background</h3>
+        <div id="gradient-swatches" class="gradient-swatches"></div>
+        <div class="color-pickers">
+          <label>
+            Color 1
+            <input id="bg-color1" type="color" value="#667eea">
+          </label>
+          <label>
+            Color 2
+            <input id="bg-color2" type="color" value="#764ba2">
+          </label>
+        </div>
+        <select id="bg-mode">
+          <option value="gradient">Gradient</option>
+          <option value="solid">Solid</option>
+        </select>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Browser Frame</h3>
+        <label class="checkbox-label">
+          <input id="frame-toggle" type="checkbox" checked>
+          Show browser frame
+        </label>
+        <select id="frame-theme">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Text</h3>
+        <input id="title-input" type="text" placeholder="Enter title...">
+        <input id="subtitle-input" type="text" placeholder="Enter subtitle...">
+        <div class="text-options">
+          <label>
+            Color
+            <input id="text-color" type="color" value="#ffffff">
+          </label>
+          <div class="size-toggles">
+            <button data-size="S">S</button>
+            <button data-size="M" class="active">M</button>
+            <button data-size="L">L</button>
+          </div>
+        </div>
+        <div class="slider-row">
+          <label>Title Gap</label>
+          <input id="title-gap-slider" type="range" min="0" max="80" value="8">
+          <span id="title-gap-value">8</span>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Styling</h3>
+        <div class="slider-row">
+          <label>Padding</label>
+          <input id="padding-slider" type="range" min="20" max="120" value="60">
+          <span id="padding-value">60</span>
+        </div>
+        <div class="slider-row">
+          <label>Corner Radius</label>
+          <input id="radius-slider" type="range" min="0" max="24" value="12">
+          <span id="radius-value">12</span>
+        </div>
+        <label class="checkbox-label">
+          <input id="shadow-toggle" type="checkbox" checked>
+          Drop shadow
+        </label>
+      </div>
+
+      <button id="download-btn" class="download-btn">Download PNG</button>
+    </div>
+  </div>
+</body>
+</html>

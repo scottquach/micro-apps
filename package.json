@@ -1,0 +1,13 @@
+{
+  "name": "social-share-utility",
+  "version": "1.0.0",
+  "description": "Capture screenshots and wrap them in polished promotional frames for social media",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "puppeteer": "^21.7.0"
+  }
+}
