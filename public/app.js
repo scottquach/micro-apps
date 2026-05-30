@@ -37,6 +37,8 @@ const FONT_SIZES = {
   L: { title: 48, subtitle: 28 },
 };
 
+const TITLE_BAR_H = 28;
+
 // Canvas & Context
 const canvas = document.getElementById('preview-canvas');
 const ctx = canvas.getContext('2d');
@@ -80,31 +82,50 @@ function truncateText(text, maxWidth) {
   return text + '...';
 }
 
-function drawTitle() {
-  if (!state.titleText) return state.padding;
-  const fontSize = FONT_SIZES[state.textSize].title;
-  ctx.font = `700 ${fontSize}px 'Inter', sans-serif`;
-  ctx.fillStyle = state.textColor;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  const y = state.padding;
-  ctx.fillText(state.titleText, canvas.width / 2, y);
-  return y + fontSize + 16;
+// Compute {x, y, w, h} for the browser frame given the available area.
+// Sizes the frame so the content area matches the image's aspect ratio,
+// then centers it in the available space.
+function computeFrameBounds(availX, availY, availW, availH) {
+  let frameW, frameH;
+
+  if (state.screenshotImage && availH > TITLE_BAR_H + 10) {
+    const img = state.screenshotImage;
+    const imgRatio = img.width / img.height;
+
+    // Start by fitting to full available width
+    frameW = availW;
+    frameH = TITLE_BAR_H + frameW / imgRatio;
+
+    if (frameH > availH) {
+      // Constrain by height instead
+      frameH = availH;
+      frameW = (frameH - TITLE_BAR_H) * imgRatio;
+    }
+
+    // Clamp in case floating-point drift pushed it over
+    if (frameW > availW) {
+      frameW = availW;
+      frameH = TITLE_BAR_H + frameW / imgRatio;
+    }
+  } else {
+    frameW = availW;
+    frameH = Math.max(50, availH);
+  }
+
+  return {
+    x: availX + (availW - frameW) / 2,
+    y: availY + (availH - frameH) / 2,
+    w: frameW,
+    h: frameH,
+  };
 }
 
-function drawBrowserFrame(startY) {
-  const p = state.padding;
-  const titleBarH = 40;
-  const subtitleReserve = state.subtitleText ? FONT_SIZES[state.textSize].subtitle + 32 : 16;
-  const x = p;
-  const y = startY;
-  const w = canvas.width - 2 * p;
-  const h = canvas.height - y - subtitleReserve;
+function drawBrowserFrame(x, y, w, h) {
   const r = state.cornerRadius;
+  const isDark = state.frameTheme === 'dark';
 
-  if (h <= titleBarH + 10) return y + h;
+  if (h <= TITLE_BAR_H + 10) return;
 
-  // Drop shadow
   if (state.shadowEnabled) {
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.35)';
@@ -116,73 +137,31 @@ function drawBrowserFrame(startY) {
     ctx.restore();
   }
 
-  // Clip to rounded rect
   ctx.save();
   drawRoundedRect(x, y, w, h, r);
   ctx.clip();
 
   // Title bar
-  const isDark = state.frameTheme === 'dark';
-  ctx.fillStyle = isDark ? '#2d2d2d' : '#e8e8e8';
-  ctx.fillRect(x, y, w, titleBarH);
-  // Bottom border
-  ctx.fillStyle = isDark ? '#3a3a3a' : '#d0d0d0';
-  ctx.fillRect(x, y + titleBarH - 1, w, 1);
+  ctx.fillStyle = isDark ? '#2a2a2a' : '#ebebeb';
+  ctx.fillRect(x, y, w, TITLE_BAR_H);
 
-  // Traffic lights
-  const lights = ['#ff5f57', '#ffbd2e', '#28c840'];
-  lights.forEach((color, i) => {
+  // Traffic lights — small dots
+  ['#ff5f57', '#ffbd2e', '#28c840'].forEach((color, i) => {
     ctx.beginPath();
-    ctx.arc(x + 16 + i * 20, y + titleBarH / 2, 6, 0, Math.PI * 2);
+    ctx.arc(x + 12 + i * 14, y + TITLE_BAR_H / 2, 3.5, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
   });
 
-  // Address bar
-  const barMaxW = Math.min(360, w * 0.45);
-  const barH = 24;
-  const barX = x + w / 2 - barMaxW / 2;
-  const barY = y + titleBarH / 2 - barH / 2;
-  ctx.fillStyle = isDark ? '#1a1a1a' : '#ffffff';
-  drawRoundedRect(barX, barY, barMaxW, barH, barH / 2);
-  ctx.fill();
-
-  // URL text in address bar
-  if (state.screenshotURL) {
-    ctx.font = "400 11px 'Inter', sans-serif";
-    ctx.fillStyle = isDark ? '#888' : '#666';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const urlText = truncateText(state.screenshotURL, barMaxW - 20);
-    ctx.fillText(urlText, x + w / 2, y + titleBarH / 2);
-  }
-
   // Content area
-  const contentY = y + titleBarH;
-  const contentH = h - titleBarH;
+  const contentY = y + TITLE_BAR_H;
+  const contentH = h - TITLE_BAR_H;
   ctx.fillStyle = isDark ? '#1e1e1e' : '#ffffff';
   ctx.fillRect(x, contentY, w, contentH);
 
-  // Screenshot or placeholder
   if (state.screenshotImage) {
-    const img = state.screenshotImage;
-    const imgRatio = img.width / img.height;
-    const areaRatio = w / contentH;
-    let drawW, drawH, drawX, drawY;
-    if (imgRatio > areaRatio) {
-      // Image is wider than area — fit to width, align top
-      drawW = w;
-      drawH = drawW / imgRatio;
-      drawX = x;
-      drawY = contentY;
-    } else {
-      // Image is taller than area — fit to height, center horizontally
-      drawH = contentH;
-      drawW = drawH * imgRatio;
-      drawX = x + (w - drawW) / 2;
-      drawY = contentY;
-    }
-    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    // Frame was sized to match image ratio, so draw image to fill exactly
+    ctx.drawImage(state.screenshotImage, x, contentY, w, contentH);
   } else {
     ctx.font = "400 16px 'Inter', sans-serif";
     ctx.fillStyle = isDark ? '#555' : '#aaa';
@@ -193,101 +172,138 @@ function drawBrowserFrame(startY) {
 
   ctx.restore();
 
-  return y + h;
+  // Thin full border drawn on top of clipped content
+  ctx.save();
+  drawRoundedRect(x, y, w, h, r);
+  ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
 }
 
-function drawSubtitle(frameBottom) {
-  if (!state.subtitleText) return;
-  const fontSize = FONT_SIZES[state.textSize].subtitle;
-  ctx.font = `400 ${fontSize}px 'Inter', sans-serif`;
-  ctx.fillStyle = state.textColor;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(state.subtitleText, canvas.width / 2, frameBottom + 12);
+// Renders the browser-frame layout with title/subtitle group centered in the canvas.
+function renderWithFrame() {
+  const p = state.padding;
+  const sizes = FONT_SIZES[state.textSize];
+
+  const titleH = state.titleText ? sizes.title : 0;
+  const subtitleH = state.subtitleText ? sizes.subtitle : 0;
+  const aboveFrame = titleH > 0 ? titleH + state.titleGap : 0;
+  const belowFrame = subtitleH > 0 ? subtitleH + 12 : 0;
+
+  const availW = canvas.width - 2 * p;
+  const availH = canvas.height - 2 * p - aboveFrame - belowFrame;
+
+  const frame = computeFrameBounds(p, p + aboveFrame, availW, availH);
+
+  // Center the entire group (title + frame + subtitle) vertically within padding
+  const groupH = aboveFrame + frame.h + belowFrame;
+  const groupOffsetY = Math.max(0, (canvas.height - 2 * p - groupH) / 2);
+
+  const frameX = frame.x;
+  const frameY = p + groupOffsetY + aboveFrame;
+
+  if (state.titleText) {
+    ctx.font = `700 ${sizes.title}px 'Inter', sans-serif`;
+    ctx.fillStyle = state.textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(state.titleText, canvas.width / 2, p + groupOffsetY);
+  }
+
+  drawBrowserFrame(frameX, frameY, frame.w, frame.h);
+
+  if (state.subtitleText) {
+    ctx.font = `400 ${sizes.subtitle}px 'Inter', sans-serif`;
+    ctx.fillStyle = state.textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(state.subtitleText, canvas.width / 2, frameY + frame.h + 12);
+  }
 }
 
-// --- Main Render ---
-
+// Renders frameless screenshot with title/subtitle group centered in the canvas.
 function drawScreenshotOnly() {
   const p = state.padding;
-  const x = p;
-  const w = canvas.width - 2 * p;
-  const h = canvas.height - 2 * p;
-  const r = state.cornerRadius;
+  const sizes = FONT_SIZES[state.textSize];
 
-  if (h <= 10) return p + h;
+  const titleH = state.titleText ? sizes.title : 0;
+  const subtitleH = state.subtitleText ? sizes.subtitle : 0;
+  const aboveImg = titleH > 0 ? titleH + state.titleGap : 0;
+  const belowImg = subtitleH > 0 ? subtitleH + 12 : 0;
 
-  if (state.screenshotImage) {
-    const img = state.screenshotImage;
-    const imgRatio = img.width / img.height;
-    const areaRatio = w / h;
-    let drawW, drawH;
-    if (imgRatio > areaRatio) {
-      drawW = w;
-      drawH = drawW / imgRatio;
-    } else {
-      drawH = h;
-      drawW = drawH * imgRatio;
-    }
-    const drawX = x + (w - drawW) / 2;
-    const drawY = p + (h - drawH) / 2;
+  const availW = canvas.width - 2 * p;
+  const availH = canvas.height - 2 * p - aboveImg - belowImg;
 
-    // Draw title just above the image
-    if (state.titleText) {
-      const fontSize = FONT_SIZES[state.textSize].title;
-      ctx.font = `700 ${fontSize}px 'Inter', sans-serif`;
-      ctx.fillStyle = state.textColor;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText(state.titleText, canvas.width / 2, drawY - state.titleGap);
-    }
-
-    if (state.shadowEnabled) {
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.35)';
-      ctx.shadowBlur = 40;
-      ctx.shadowOffsetY = 12;
-      drawRoundedRect(drawX, drawY, drawW, drawH, r);
-      ctx.fillStyle = 'rgba(0,0,0,0)';
-      ctx.fill();
-      ctx.restore();
-    }
-
-    ctx.save();
-    drawRoundedRect(drawX, drawY, drawW, drawH, r);
-    ctx.clip();
-    ctx.drawImage(img, drawX, drawY, drawW, drawH);
-    ctx.restore();
-
-    // Draw subtitle just below the image
-    if (state.subtitleText) {
-      const fontSize = FONT_SIZES[state.textSize].subtitle;
-      ctx.font = `400 ${fontSize}px 'Inter', sans-serif`;
-      ctx.fillStyle = state.textColor;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(state.subtitleText, canvas.width / 2, drawY + drawH + 12);
-    }
-
-    return drawY + drawH;
-  } else {
+  if (!state.screenshotImage) {
     ctx.font = "400 16px 'Inter', sans-serif";
     ctx.fillStyle = '#555';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Capture or upload a screenshot to preview', x + w / 2, p + h / 2);
-    return p + h;
+    ctx.fillText('Capture or upload a screenshot to preview', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  const img = state.screenshotImage;
+  const imgRatio = img.width / img.height;
+  const areaRatio = availW / availH;
+
+  let drawW, drawH;
+  if (imgRatio > areaRatio) {
+    drawW = availW;
+    drawH = drawW / imgRatio;
+  } else {
+    drawH = availH;
+    drawW = drawH * imgRatio;
+  }
+
+  const groupH = aboveImg + drawH + belowImg;
+  const groupOffsetY = Math.max(0, (canvas.height - 2 * p - groupH) / 2);
+  const drawX = p + (availW - drawW) / 2;
+  const drawY = p + groupOffsetY + aboveImg;
+
+  if (state.titleText) {
+    ctx.font = `700 ${sizes.title}px 'Inter', sans-serif`;
+    ctx.fillStyle = state.textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(state.titleText, canvas.width / 2, p + groupOffsetY);
+  }
+
+  if (state.shadowEnabled) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 40;
+    ctx.shadowOffsetY = 12;
+    drawRoundedRect(drawX, drawY, drawW, drawH, state.cornerRadius);
+    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.save();
+  drawRoundedRect(drawX, drawY, drawW, drawH, state.cornerRadius);
+  ctx.clip();
+  ctx.drawImage(img, drawX, drawY, drawW, drawH);
+  ctx.restore();
+
+  if (state.subtitleText) {
+    ctx.font = `400 ${sizes.subtitle}px 'Inter', sans-serif`;
+    ctx.fillStyle = state.textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(state.subtitleText, canvas.width / 2, drawY + drawH + 12);
   }
 }
+
+// --- Main Render ---
 
 function render() {
   canvas.width = state.canvasWidth;
   canvas.height = state.canvasHeight;
   drawBackground();
   if (state.frameEnabled) {
-    const titleBottom = drawTitle();
-    const frameBottom = drawBrowserFrame(titleBottom);
-    drawSubtitle(frameBottom);
+    renderWithFrame();
   } else {
     drawScreenshotOnly();
   }
@@ -431,7 +447,6 @@ function bindControls() {
       render();
     });
   });
-  // Set first preset active
   presetBtns[0].classList.add('active');
 
   // Custom size inputs
