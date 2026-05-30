@@ -1,3 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Share Utility</title>
+  <style>
+/* ======================
+   Reset & Base
+   ====================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #0f0f0f;
+  color: #e0e0e0;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ======================
+   Layout
+   ====================== */
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.preview-panel {
+  flex: 1;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.canvas-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+#preview-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+}
+
+.controls-panel {
+  width: 340px;
+  background: #141414;
+  border-left: 1px solid #222;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ======================
+   Controls
+   ====================== */
+.app-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 16px 0;
+}
+
+.control-section {
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin: 0 0 8px 0;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: #667eea;
+}
+
+select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  appearance: auto;
+}
+
+select:focus {
+  border-color: #667eea;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+#upload-btn {
+  width: 100%;
+  padding: 10px;
+  background: #333;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+#upload-btn:hover {
+  background: #3d3d3d;
+  border-color: #555;
+}
+
+#status-text {
+  display: block;
+  font-size: 12px;
+  margin-top: 6px;
+  min-height: 18px;
+}
+
+.status-text.error {
+  color: #f87171;
+}
+
+.status-text.success {
+  color: #4ade80;
+}
+
+/* ======================
+   Preset Buttons
+   ====================== */
+.preset-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-buttons button {
+  padding: 6px 12px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 16px;
+  color: #aaa;
+  font-size: 12px;
+}
+
+.preset-buttons button:hover {
+  border-color: #555;
+}
+
+.preset-buttons button.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* ======================
+   Gradient Swatches
+   ====================== */
+.gradient-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.gradient-swatches .swatch {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.gradient-swatches .swatch:hover {
+  border-color: #555;
+}
+
+.gradient-swatches .swatch.active {
+  border-color: #fff;
+}
+
+/* ======================
+   Color Pickers
+   ====================== */
+.color-pickers {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.color-pickers label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+.color-pickers input[type="color"] {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: none;
+}
+
+/* ======================
+   Text Options
+   ====================== */
+.text-options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.text-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+.size-toggles {
+  display: flex;
+  gap: 4px;
+}
+
+.size-toggles button {
+  width: 32px;
+  height: 28px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #aaa;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.size-toggles button:hover {
+  border-color: #555;
+}
+
+.size-toggles button.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* ======================
+   Sliders
+   ====================== */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.slider-row label {
+  font-size: 12px;
+  color: #888;
+  min-width: 90px;
+}
+
+.slider-row input[type="range"] {
+  flex: 1;
+  accent-color: #667eea;
+}
+
+.slider-row span {
+  font-size: 12px;
+  color: #aaa;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ======================
+   Checkbox
+   ====================== */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+/* ======================
+   Download Button
+   ====================== */
+.download-btn {
+  width: 100%;
+  padding: 12px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.download-btn:hover {
+  background: #16a34a;
+}
+
+/* ======================
+   Utility
+   ====================== */
+.control-section input[type="text"] + input[type="text"] {
+  margin-top: 8px;
+}
+
+#custom-size-inputs {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#custom-size-inputs.hidden {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="preview-panel">
+      <div class="canvas-container">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <h1 class="app-title">Social Share Utility</h1>
+
+      <div class="control-section">
+        <h3 class="section-title">Image</h3>
+        <input id="upload-input" type="file" accept="image/*" class="hidden">
+        <button id="upload-btn">Upload Image</button>
+        <span id="status-text" class="status-text"></span>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Size Preset</h3>
+        <div class="preset-buttons">
+          <button data-width="1200" data-height="675">Twitter</button>
+          <button data-width="1080" data-height="1080">Square</button>
+          <button data-width="1200" data-height="627">LinkedIn</button>
+          <button data-width="1080" data-height="1350">Threads</button>
+          <button>Custom</button>
+        </div>
+        <div id="custom-size-inputs" class="hidden">
+          <input id="custom-width" type="number" value="1200">
+          <input id="custom-height" type="number" value="675">
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Background</h3>
+        <div id="gradient-swatches" class="gradient-swatches"></div>
+        <div class="color-pickers">
+          <label>
+            Color 1
+            <input id="bg-color1" type="color" value="#667eea">
+          </label>
+          <label>
+            Color 2
+            <input id="bg-color2" type="color" value="#764ba2">
+          </label>
+        </div>
+        <select id="bg-mode">
+          <option value="gradient">Gradient</option>
+          <option value="solid">Solid</option>
+        </select>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Browser Frame</h3>
+        <label class="checkbox-label">
+          <input id="frame-toggle" type="checkbox" checked>
+          Show browser frame
+        </label>
+        <select id="frame-theme">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Text</h3>
+        <input id="title-input" type="text" placeholder="Enter title...">
+        <input id="subtitle-input" type="text" placeholder="Enter subtitle...">
+        <div class="text-options">
+          <label>
+            Color
+            <input id="text-color" type="color" value="#ffffff">
+          </label>
+          <div class="size-toggles">
+            <button data-size="S">S</button>
+            <button data-size="M" class="active">M</button>
+            <button data-size="L">L</button>
+          </div>
+        </div>
+        <div class="slider-row">
+          <label>Title Gap</label>
+          <input id="title-gap-slider" type="range" min="0" max="80" value="8">
+          <span id="title-gap-value">8</span>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3 class="section-title">Styling</h3>
+        <div class="slider-row">
+          <label>Padding</label>
+          <input id="padding-slider" type="range" min="20" max="120" value="60">
+          <span id="padding-value">60</span>
+        </div>
+        <div class="slider-row">
+          <label>Corner Radius</label>
+          <input id="radius-slider" type="range" min="0" max="24" value="12">
+          <span id="radius-value">12</span>
+        </div>
+        <label class="checkbox-label">
+          <input id="shadow-toggle" type="checkbox" checked>
+          Drop shadow
+        </label>
+      </div>
+
+      <button id="download-btn" class="download-btn">Download PNG</button>
+    </div>
+  </div>
+  <script>
 // State
 const state = {
   screenshotImage: null,
@@ -311,54 +789,6 @@ function render() {
 
 // --- API Integration ---
 
-async function captureScreenshot() {
-  const urlInput = document.getElementById('url-input');
-  const captureBtn = document.getElementById('capture-btn');
-  const statusText = document.getElementById('status-text');
-  const url = urlInput.value.trim();
-
-  if (!url) {
-    statusText.textContent = 'Please enter a URL';
-    statusText.className = 'status-text error';
-    return;
-  }
-
-  captureBtn.disabled = true;
-  captureBtn.textContent = 'Capturing...';
-  statusText.textContent = 'Taking screenshot...';
-  statusText.className = 'status-text';
-
-  try {
-    const res = await fetch('/api/screenshot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, width: 1280, height: 800 }),
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      const img = new Image();
-      img.onload = () => {
-        state.screenshotImage = img;
-        state.screenshotURL = url;
-        render();
-        statusText.textContent = 'Screenshot captured!';
-        statusText.className = 'status-text success';
-      };
-      img.src = 'data:image/png;base64,' + data.image;
-    } else {
-      statusText.textContent = data.error || 'Capture failed';
-      statusText.className = 'status-text error';
-    }
-  } catch (err) {
-    statusText.textContent = 'Network error: ' + err.message;
-    statusText.className = 'status-text error';
-  } finally {
-    captureBtn.disabled = false;
-    captureBtn.textContent = 'Capture Screenshot';
-  }
-}
-
 function handleUpload(file) {
   const statusText = document.getElementById('status-text');
 
@@ -418,9 +848,6 @@ function initGradientSwatches() {
 }
 
 function bindControls() {
-  // Capture
-  document.getElementById('capture-btn').addEventListener('click', captureScreenshot);
-
   // Upload
   const uploadInput = document.getElementById('upload-input');
   document.getElementById('upload-btn').addEventListener('click', () => uploadInput.click());
@@ -565,3 +992,6 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
