@@ -1,0 +1,1 @@
+A collection of small micro apps useful for everyday app development. Feel free to submit your own! I've try to keep each micro app as a pure HTML file to keep things simple. 
