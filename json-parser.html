@@ -4,63 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JSON Parser</title>
+<link rel="stylesheet" href="common/index.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root {
-  --bg:         #111111;
-  --surface:    #1a1a1a;
-  --surface2:   #222222;
-  --surface3:   #2a2a2a;
-  --border:     #303030;
-  --border2:    #3e3e3e;
-  --text:       #eeebe6;
-  --text-dim:   #b0aca6;
-  --text-muted: #787470;
-  --accent:     #c4964e;
-  --accent-dim: rgba(196,150,78,0.10);
-  --error:      #c07878;
-  --success:    #78a88e;
   --jk:    #8eb4cc;
   --js:    #c49a52;
   --jn:    #ab98c8;
   --jb:    #78a88e;
   --jnull: #b08888;
   --jbrace:#6a6358;
-  --font-mono: Consolas,"Liberation Mono","Courier New",monospace;
-  --font-ui: Inter,"Segoe UI",system-ui,-apple-system,sans-serif;
-  --r: 4px;
-  --t: 0.13s ease;
 }
 
 html,body{height:100%;overflow:hidden}
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 13px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-/* ── Header ── */
-.hdr {
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;height:42px;
-  background:var(--surface);border-bottom:1px solid var(--border);
-  flex-shrink:0;
+.frame {
+  width: 100%;
+  max-width: 1600px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
-.logo {
-  display:flex;align-items:center;gap:10px;
-  font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-}
-.logo-glyph {
-  font-family:var(--font-mono);font-size:18px;color:var(--accent);
-  font-weight:700;line-height:1;
-}
-.logo-name{color:var(--text)}
-.logo-ver{color:var(--text-muted);font-size:10px;font-weight:400;letter-spacing:0.05em}
 
 .validity {
   padding:3px 10px;border-radius:var(--r);
@@ -71,21 +43,14 @@ body {
 .validity.valid{background:rgba(120,168,142,.10);color:var(--success);border:1px solid rgba(120,168,142,.28)}
 .validity.invalid{background:rgba(192,120,120,.10);color:var(--error);border:1px solid rgba(192,120,120,.28)}
 
-/* ── Toolbar ── */
-.toolbar {
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 10px;height:36px;
-  background:var(--surface2);border-bottom:1px solid var(--border);
-  flex-shrink:0;gap:6px;
-}
-.tg{display:flex;align-items:center;gap:3px}
-.sep{width:1px;height:16px;background:var(--border);margin:0 4px}
+/* ── Shared panel header ── */
+.ph { height: 30px; } /* enforce fixed height — overrides min-height from common.css */
 
 .btn {
-  display:inline-flex;align-items:center;gap:5px;
-  padding:4px 10px;border:1px solid var(--border2);border-radius:var(--r);
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border:1px solid var(--border2);border-radius:var(--r);
   background:transparent;color:var(--text-dim);
-  font-family:var(--font-ui);font-size:11.5px;font-weight:500;
+  font-family:var(--font-ui);font-size:13px;font-weight:500;
   cursor:pointer;transition:all var(--t);white-space:nowrap;letter-spacing:0.02em;
 }
 .btn:hover{background:var(--surface3);color:var(--text)}
@@ -96,8 +61,8 @@ body {
 
 .isel {
   background:transparent;border:1px solid var(--border2);
-  color:var(--text-dim);font-family:var(--font-ui);font-size:11.5px;
-  padding:4px 7px;border-radius:var(--r);cursor:pointer;outline:none;
+  color:var(--text-dim);font-family:var(--font-ui);font-size:13px;
+  padding:6px 9px;border-radius:var(--r);cursor:pointer;outline:none;
   transition:color var(--t);
 }
 .isel:hover{color:var(--text)}
@@ -106,25 +71,19 @@ body {
 /* ── Workspace ── */
 .ws{display:flex;flex:1;overflow:hidden;min-height:0}
 
-.panel{display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.inp-panel{flex:1;border-right:1px solid var(--border)}
+.inp-panel{flex:1}
 .out-panel{flex:1}
 
-.ph {
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 12px;height:30px;
-  background:var(--surface2);border-bottom:1px solid var(--border);
-  flex-shrink:0;font-size:10px;font-weight:700;letter-spacing:0.12em;
-  text-transform:uppercase;color:var(--text-muted);
+/* ── Middle column ── */
+.mid-panel {
+  width:150px;flex-shrink:0;
+  border-left:1px solid var(--border);border-right:1px solid var(--border);
 }
-.tabs{display:flex;gap:2px}
-.tab {
-  padding:3px 9px;border-radius:var(--r);
-  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--text-muted);cursor:pointer;transition:all var(--t);border:1px solid transparent;
+.mid-body {
+  padding:12px 10px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;
 }
-.tab:hover{color:var(--text-dim);background:var(--surface3)}
-.tab.on{color:var(--accent);background:var(--accent-dim);border-color:rgba(196,150,78,.2)}
+.full-w{width:100%;justify-content:center}
+.mid-sep{height:1px;background:var(--border);margin:4px 0}
 
 /* ── Editor ── */
 .ed-wrap{flex:1;display:flex;overflow:hidden;position:relative}
@@ -149,13 +108,6 @@ body {
 #inp::selection{background:rgba(196,150,78,.15)}
 #inp::placeholder{color:var(--text-muted)}
 
-/* ── Divider ── */
-.dvdr{
-  width:4px;background:var(--border);cursor:col-resize;
-  flex-shrink:0;transition:background var(--t);
-}
-.dvdr:hover,.dvdr.drag{background:var(--accent)}
-
 /* ── Output ── */
 .out-content{flex:1;overflow:auto;position:relative}
 
@@ -170,10 +122,12 @@ body {
 .jb{color:var(--jb)} .jnull{color:var(--jnull)} .jbrace{color:var(--jbrace)}
 
 /* ── Error panel ── */
+.out-header{position:relative;flex-shrink:0}
 .err-panel {
   display:none;padding:8px 14px;
-  background:rgba(192,120,120,.07);border-bottom:1px solid rgba(192,120,120,.18);
-  flex-shrink:0;gap:8px;
+  background:rgba(192,120,120,.09);border-bottom:1px solid rgba(192,120,120,.22);
+  gap:8px;
+  position:absolute;top:100%;left:0;right:0;z-index:20;
 }
 .err-panel.on{display:flex;align-items:flex-start}
 .err-icon{color:var(--error);font-size:13px;flex-shrink:0;margin-top:1px}
@@ -201,7 +155,18 @@ body {
   font-family:var(--font-ui);font-size:12px;color:var(--text);
 }
 #srch::placeholder{color:var(--text-muted)}
-.srch-ct{font-size:11px;color:var(--text-dim);white-space:nowrap}
+.srch-ct{font-size:11px;color:var(--text-dim);white-space:nowrap;min-width:52px;text-align:center}
+
+.srch-nav {
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;flex-shrink:0;
+  border:1px solid var(--border2);border-radius:var(--r);
+  background:transparent;color:var(--text-dim);font-size:13px;line-height:1;
+  cursor:pointer;transition:all var(--t);user-select:none;
+}
+.srch-nav:hover{background:var(--surface3);color:var(--text)}
+.srch-nav:active{transform:translateY(1px)}
+.srch-nav:disabled{opacity:.3;cursor:default;pointer-events:none}
 
 /* ── Search results ── */
 .srch-res {
@@ -225,39 +190,7 @@ body {
 .sr-badge.val{background:rgba(196,150,78,.10);color:var(--js);border:1px solid rgba(196,150,78,.22)}
 .sr-val{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .hl{background:rgba(196,150,78,.22);border-radius:2px;outline:1px solid rgba(196,150,78,.4)}
-
-/* ── Tree view ── */
-.tree {
-  display:none;padding:10px 12px;
-  font-family:var(--font-mono);font-size:11.5px;line-height:1.7;
-  overflow:auto;min-height:100%;
-}
-.tree.on{display:block}
-
-.t-node{position:relative}
-.t-row {
-  display:flex;align-items:center;gap:3px;
-  padding:0 4px;border-radius:var(--r);cursor:default;transition:background var(--t);
-}
-.t-row:hover{background:var(--surface3)}
-.t-tog {
-  display:inline-flex;align-items:center;justify-content:center;
-  width:15px;height:15px;font-size:9px;color:var(--text-muted);
-  cursor:pointer;user-select:none;transition:transform .2s ease;
-  flex-shrink:0;border-radius:3px;
-}
-.t-tog:hover{background:var(--border2);color:var(--accent)}
-.t-tog.coll{transform:rotate(-90deg)}
-.t-key{color:var(--jk)} .t-colon{color:var(--text-muted)}
-.t-ct{color:var(--text-muted);font-size:10px;margin-left:3px}
-.t-brace{color:var(--jbrace)}
-.t-kids {
-  margin-left:18px;border-left:1px solid var(--border);
-  padding-left:8px;
-}
-.t-kids.coll{display:none}
-.tv-str{color:var(--js)} .tv-num{color:var(--jn)}
-.tv-bool{color:var(--jb)} .tv-null{color:var(--jnull)}
+.hl.cur{background:rgba(196,150,78,.55);outline:2px solid rgba(196,150,78,.9)}
 
 /* ── Status bar ── */
 .stbar {
@@ -291,53 +224,23 @@ body {
 }
 .toast.on{opacity:1;transform:translateY(0)}
 
-/* ── Scrollbars ── */
-*{scrollbar-width:thin;scrollbar-color:var(--border2) var(--surface)}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--surface)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<header class="hdr">
-  <div class="logo">
-    <span class="logo-glyph">{}</span>
-    <span class="logo-name">JSON PARSER</span>
-    <span class="logo-ver">v1.0</span>
-  </div>
-  <span class="validity empty" id="vbadge">EMPTY</span>
-</header>
-
-<!-- Toolbar -->
-<div class="toolbar">
-  <div class="tg">
-    <button class="btn btn-hi" id="bFmt">⌥ Format</button>
-    <select class="isel" id="indent" title="Indent size">
-      <option value="2">2 spaces</option>
-      <option value="4">4 spaces</option>
-      <option value="tab">tab</option>
-    </select>
-    <div class="sep"></div>
-    <button class="btn" id="bCpt">⊟ Compact</button>
-    <div class="sep"></div>
-    <button class="btn" id="bTree">⊞ Tree</button>
-  </div>
-  <div class="tg">
-    <button class="btn" id="bSrch">⌕ Search</button>
-    <div class="sep"></div>
-    <button class="btn" id="bCopy">⎘ Copy</button>
-    <button class="btn" id="bClr">✕ Clear</button>
-  </div>
-</div>
+<div class="frame">
 
 <!-- Workspace -->
 <div class="ws" id="ws">
   <!-- Input panel -->
   <div class="panel inp-panel" id="ipanel">
-    <div class="ph"><span>Input</span></div>
+    <div class="ph">
+      <span style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:var(--font-mono);font-size:16px;color:var(--accent);font-weight:700;line-height:1;text-transform:none;letter-spacing:0">{}</span>
+        <span>JSON Parser</span>
+      </span>
+    </div>
     <div class="ed-wrap">
       <div class="lns" id="lns"></div>
       <textarea id="inp" spellcheck="false" autocomplete="off" autocorrect="off"
@@ -345,25 +248,40 @@ body {
     </div>
   </div>
 
-  <div class="dvdr" id="dvdr"></div>
+  <!-- Middle controls column -->
+  <div class="panel mid-panel">
+    <div class="ph"><span>Convert</span></div>
+    <div class="mid-body">
+      <button class="btn btn-hi full-w" id="bFmt">⌥ Format</button>
+      <select class="isel full-w" id="indent" title="Indent size">
+        <option value="2">2 spaces</option>
+        <option value="4">4 spaces</option>
+        <option value="tab">tab</option>
+      </select>
+      <button class="btn full-w" id="bCpt">⊟ Compact</button>
+      <button class="btn full-w" id="bStringify">⋯ Stringify</button>
+      <div class="mid-sep"></div>
+      <button class="btn full-w" id="bSrch">⌕ Search</button>
+      <button class="btn full-w" id="bCopy">⎘ Copy</button>
+      <button class="btn full-w" id="bClr">✕ Clear</button>
+    </div>
+  </div>
 
   <!-- Output panel -->
   <div class="panel out-panel" id="opanel">
-    <div class="ph">
-      <span>Output</span>
-      <div class="tabs">
-        <div class="tab on" id="tFmt" data-t="fmt">Formatted</div>
-        <div class="tab" id="tTree" data-t="tree">Tree</div>
+    <div class="out-header">
+      <div class="ph">
+        <span>Output</span>
+        <span class="validity empty" id="vbadge">EMPTY</span>
       </div>
-    </div>
-
-    <!-- Error -->
-    <div class="err-panel" id="errP">
-      <span class="err-icon">⚠</span>
-      <div>
-        <div class="err-title">Parse Error</div>
-        <div class="err-msg" id="errMsg"></div>
-        <div class="err-loc" id="errLoc"></div>
+      <!-- Error overlays content, does not push layout -->
+      <div class="err-panel" id="errP">
+        <span class="err-icon">⚠</span>
+        <div>
+          <div class="err-title">Parse Error</div>
+          <div class="err-msg" id="errMsg"></div>
+          <div class="err-loc" id="errLoc"></div>
+        </div>
       </div>
     </div>
 
@@ -374,26 +292,18 @@ body {
         <input type="text" id="srch" placeholder="Search keys and values…">
       </div>
       <span class="srch-ct" id="srchCt">—</span>
+      <button class="srch-nav" id="bPrev" title="Previous (Shift+Enter / ↑)">↑</button>
+      <button class="srch-nav" id="bNext" title="Next (Enter / ↓)">↓</button>
     </div>
     <div class="srch-res" id="srchRes"></div>
 
-    <!-- Formatted tab content -->
+    <!-- Output content -->
     <div class="out-content" id="cFmt">
       <code id="out"></code>
       <div class="empty" id="outEmpty">
         <div class="empty-ico">{ }</div>
         <div class="empty-ttl">No Output</div>
         <div class="empty-sub">Paste JSON in the input panel<br>then click Format or Compact</div>
-      </div>
-    </div>
-
-    <!-- Tree tab content -->
-    <div class="out-content" id="cTree" style="display:none">
-      <div class="tree" id="treeV"></div>
-      <div class="empty" id="treeEmpty" style="display:none">
-        <div class="empty-ico">⊞</div>
-        <div class="empty-ttl">Tree View</div>
-        <div class="empty-sub">Format valid JSON first</div>
       </div>
     </div>
   </div>
@@ -409,6 +319,7 @@ body {
   </div>
   <span id="sType" style="color:var(--text-muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase"></span>
 </div>
+</div><!-- /.frame -->
 
 <div class="toast" id="toast"></div>
 
@@ -418,10 +329,10 @@ let parsed = null;
 let rawOutput = '';
 let errLine = null;
 let srchOn = false;
-let treeOn = false;
 let parseTimer = null;
 let srchTimer = null;
-let activeTab = 'fmt';
+let searchMarks = [];
+let searchIdx = -1;
 
 // ── Elements ───────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -429,9 +340,9 @@ const inp = $('inp'), out = $('out'), lns = $('lns');
 const vbadge = $('vbadge');
 const errP = $('errP'), errMsg = $('errMsg'), errLoc = $('errLoc');
 const srchBar = $('srchBar'), srch = $('srch'), srchCt = $('srchCt'), srchRes = $('srchRes');
-const treeV = $('treeV'), outEmpty = $('outEmpty'), treeEmpty = $('treeEmpty');
-const tFmt = $('tFmt'), tTree = $('tTree'), cFmt = $('cFmt'), cTree = $('cTree');
-const bFmt = $('bFmt'), bCpt = $('bCpt'), bSrch = $('bSrch'), bTree = $('bTree');
+const outEmpty = $('outEmpty');
+const bFmt = $('bFmt'), bCpt = $('bCpt'), bSrch = $('bSrch'), bStringify = $('bStringify');
+const bPrev = $('bPrev'), bNext = $('bNext');
 const bCopy = $('bCopy'), bClr = $('bClr');
 const toast = $('toast');
 
@@ -564,8 +475,6 @@ function doFormat() {
   const ind = $('indent').value === 'tab' ? '\t' : +$('indent').value;
   rawOutput = JSON.stringify(parsed, null, ind);
   renderOutput();
-  if (activeTab === 'tree') buildTreeView();
-  showTab('fmt');
 }
 
 // ── Compact ────────────────────────────────────────────────────────────────
@@ -573,106 +482,62 @@ function doCompact() {
   if (!tryParse()) return;
   rawOutput = JSON.stringify(parsed);
   renderOutput();
-  showTab('fmt');
+}
+
+// ── Stringify ──────────────────────────────────────────────────────────────
+function doStringify() {
+  if (!tryParse()) return;
+  rawOutput = JSON.stringify(JSON.stringify(parsed));
+  renderOutput();
 }
 
 // ── Render output ──────────────────────────────────────────────────────────
+const HIGHLIGHT_LIMIT = 150_000; // skip syntax highlighting above ~150 KB
+
 function renderOutput() {
+  outEmpty.style.display = 'none';
+  out.style.display = 'block';
+  if (rawOutput.length > HIGHLIGHT_LIMIT) {
+    out.textContent = rawOutput;
+    return;
+  }
   let h = highlight(rawOutput);
   if (srchOn && srch.value.trim()) h = hlSearch(h, srch.value.trim());
   out.innerHTML = h;
-  outEmpty.style.display = 'none';
-  out.style.display = 'block';
 }
 
-// ── Tab switching ──────────────────────────────────────────────────────────
-function showTab(t) {
-  activeTab = t;
-  tFmt.classList.toggle('on', t==='fmt');
-  tTree.classList.toggle('on', t==='tree');
-  cFmt.style.display = t==='fmt' ? 'block' : 'none';
-  cTree.style.display = t==='tree' ? 'block' : 'none';
-  bTree.classList.toggle('on', t==='tree');
-}
-
-tFmt.addEventListener('click', () => showTab('fmt'));
-tTree.addEventListener('click', () => {
-  showTab('tree');
-  if (parsed !== null) buildTreeView(); else showTreeEmpty();
-});
-
-function showTreeEmpty() {
-  treeV.style.display = 'none';
-  treeEmpty.style.display = 'flex';
-}
-
-// ── Tree view ──────────────────────────────────────────────────────────────
-function buildTreeView() {
-  treeV.innerHTML = '';
-  treeEmpty.style.display = 'none';
-  treeV.style.display = 'block';
-  if (parsed === null && inp.value.trim() === '') { showTreeEmpty(); return; }
-  treeV.appendChild(makeNode(parsed, null));
-}
-
-function makeNode(data, key) {
-  const node = document.createElement('div');
-  node.className = 't-node';
-  const isArr = Array.isArray(data);
-  const isObj = data !== null && typeof data === 'object';
-
-  if (isObj) {
-    const entries = isArr ? data.map((v,i)=>[i,v]) : Object.entries(data);
-    const count = entries.length;
-    const ob = isArr ? '[' : '{', cb = isArr ? ']' : '}';
-
-    const row = document.createElement('div'); row.className = 't-row';
-    const tog = document.createElement('span'); tog.className = 't-tog'; tog.innerHTML = '▾';
-    const lbl = document.createElement('span');
-
-    const keyHtml = key !== null ? `<span class="t-key">"${esc(String(key))}"</span><span class="t-colon">: </span>` : '';
-    lbl.innerHTML = `${keyHtml}<span class="t-brace">${ob}</span><span class="t-ct">${count} ${isArr?'item':'key'}${count!==1?'s':''}</span>`;
-
-    row.appendChild(tog); row.appendChild(lbl);
-    node.appendChild(row);
-
-    const kids = document.createElement('div'); kids.className = 't-kids';
-    entries.forEach(([k,v]) => kids.appendChild(makeNode(v, k)));
-
-    const closeRow = document.createElement('div'); closeRow.className = 't-row';
-    closeRow.innerHTML = `<span style="width:15px;flex-shrink:0;display:inline-block"></span><span class="t-brace">${cb}</span>`;
-    kids.appendChild(closeRow);
-    node.appendChild(kids);
-
-    function doToggle(e) {
-      e.stopPropagation();
-      const c = kids.classList.toggle('coll');
-      tog.classList.toggle('coll', c);
-      if (c) lbl.innerHTML = `${keyHtml}<span class="t-brace">${ob}</span><span class="t-ct">${count} ${isArr?'item':'key'}${count!==1?'s':''}</span><span class="t-brace">${cb}</span>`;
-      else lbl.innerHTML = `${keyHtml}<span class="t-brace">${ob}</span><span class="t-ct">${count} ${isArr?'item':'key'}${count!==1?'s':''}</span>`;
-    }
-    tog.addEventListener('click', doToggle);
-    row.style.cursor = 'pointer';
-    row.addEventListener('click', doToggle);
-  } else {
-    const row = document.createElement('div'); row.className = 't-row';
-    const sp = document.createElement('span'); sp.style.cssText='width:15px;flex-shrink:0;display:inline-block';
-    const lbl = document.createElement('span');
-    const keyHtml = key !== null ? `<span class="t-key">"${esc(String(key))}"</span><span class="t-colon">: </span>` : '';
-    let vc, vd;
-    if (data === null) { vc='tv-null'; vd='null'; }
-    else if (typeof data==='boolean') { vc='tv-bool'; vd=String(data); }
-    else if (typeof data==='number') { vc='tv-num'; vd=String(data); }
-    else {
-      vc='tv-str';
-      const s = esc(String(data));
-      vd = `"${s.length > 120 ? s.slice(0,120)+'…' : s}"`;
-    }
-    lbl.innerHTML = `${keyHtml}<span class="${vc}">${vd}</span>`;
-    row.appendChild(sp); row.appendChild(lbl);
-    node.appendChild(row);
+// ── Search navigation ──────────────────────────────────────────────────────
+function updateSearchCount() {
+  if (!searchMarks.length) {
+    srchCt.textContent = srch.value.trim() ? '0 results' : '—';
+    bPrev.disabled = true; bNext.disabled = true;
+    return;
   }
-  return node;
+  srchCt.textContent = `${searchIdx + 1} / ${searchMarks.length}`;
+  bPrev.disabled = false; bNext.disabled = false;
+}
+
+function focusMark(idx) {
+  searchMarks.forEach(m => m.classList.remove('cur'));
+  if (idx < 0 || !searchMarks[idx]) return;
+  const mark = searchMarks[idx];
+  mark.classList.add('cur');
+  const container = $('cFmt');
+  const mRect = mark.getBoundingClientRect();
+  const cRect = container.getBoundingClientRect();
+  container.scrollTo({ top: container.scrollTop + mRect.top - cRect.top - cRect.height / 2, behavior: 'smooth' });
+}
+
+function goNext() {
+  if (!searchMarks.length) return;
+  searchIdx = (searchIdx + 1) % searchMarks.length;
+  focusMark(searchIdx); updateSearchCount();
+}
+
+function goPrev() {
+  if (!searchMarks.length) return;
+  searchIdx = (searchIdx - 1 + searchMarks.length) % searchMarks.length;
+  focusMark(searchIdx); updateSearchCount();
 }
 
 // ── Search ─────────────────────────────────────────────────────────────────
@@ -696,14 +561,14 @@ function searchIn(data, q, path, results) {
 function doSearch() {
   const q = srch.value.trim();
   if (!q || !parsed) {
-    srchCt.textContent = '—';
     srchRes.innerHTML = ''; srchRes.classList.remove('on');
+    searchMarks = []; searchIdx = -1;
     if (rawOutput) renderOutput();
+    updateSearchCount();
     return;
   }
   const results = [];
   searchIn(parsed, q, 'root', results);
-  srchCt.textContent = `${results.length} match${results.length!==1?'es':''}`;
 
   srchRes.innerHTML = '';
   if (results.length) {
@@ -726,21 +591,17 @@ function doSearch() {
   }
 
   if (rawOutput) renderOutput();
+
+  searchMarks = Array.from(out.querySelectorAll('.hl'));
+  searchIdx = searchMarks.length > 0 ? 0 : -1;
+  focusMark(searchIdx);
+  updateSearchCount();
 }
 
 // ── Wire buttons ───────────────────────────────────────────────────────────
 bFmt.addEventListener('click', doFormat);
 bCpt.addEventListener('click', doCompact);
-
-bTree.addEventListener('click', () => {
-  const next = activeTab !== 'tree';
-  if (next) {
-    showTab('tree');
-    if (parsed !== null) buildTreeView(); else showTreeEmpty();
-  } else {
-    showTab('fmt');
-  }
-});
+bStringify.addEventListener('click', doStringify);
 
 bSrch.addEventListener('click', () => {
   srchOn = !srchOn;
@@ -748,17 +609,27 @@ bSrch.addEventListener('click', () => {
   srchBar.classList.toggle('on', srchOn);
   if (srchOn) srch.focus();
   else {
-    srch.value = ''; srchCt.textContent = '—';
+    srch.value = '';
     srchRes.innerHTML = ''; srchRes.classList.remove('on');
+    searchMarks = []; searchIdx = -1;
     if (rawOutput) renderOutput();
+    updateSearchCount();
   }
 });
+
+bPrev.addEventListener('click', goPrev);
+bNext.addEventListener('click', goNext);
 
 srch.addEventListener('input', () => {
   clearTimeout(srchTimer);
   srchTimer = setTimeout(doSearch, 180);
 });
-srch.addEventListener('keydown', e => { if (e.key==='Escape') bSrch.click() });
+srch.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { bSrch.click(); return; }
+  if (e.key === 'Enter') { e.preventDefault(); e.shiftKey ? goPrev() : goNext(); return; }
+  if (e.key === 'ArrowDown') { e.preventDefault(); goNext(); return; }
+  if (e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+});
 
 bCopy.addEventListener('click', () => {
   const txt = rawOutput || inp.value;
@@ -777,9 +648,10 @@ bClr.addEventListener('click', () => {
   inp.value = ''; rawOutput = ''; parsed = null; errLine = null;
   out.innerHTML = ''; out.style.display = 'none';
   outEmpty.style.display = 'flex';
-  treeV.innerHTML = ''; treeV.style.display = 'none'; treeEmpty.style.display = 'none';
-  srch.value = ''; srchCt.textContent = '—';
+  srch.value = '';
   srchRes.innerHTML = ''; srchRes.classList.remove('on');
+  searchMarks = []; searchIdx = -1;
+  updateSearchCount();
   errP.classList.remove('on');
   vbadge.className = 'validity empty'; vbadge.textContent = 'EMPTY';
   updateLns(); updateStats();
@@ -790,6 +662,16 @@ inp.addEventListener('input', () => {
   updateLns();
   clearTimeout(parseTimer);
   parseTimer = setTimeout(tryParse, 250);
+});
+
+inp.addEventListener('paste', () => {
+  requestAnimationFrame(() => {
+    const ind = $('indent').value === 'tab' ? '\t' : +$('indent').value;
+    if (tryParse()) {
+      rawOutput = JSON.stringify(parsed, null, ind);
+      renderOutput();
+    }
+  });
 });
 
 inp.addEventListener('keydown', e => {
@@ -809,28 +691,6 @@ document.addEventListener('keydown', e => {
   if (e.ctrlKey && !e.shiftKey && e.key==='f' && document.activeElement !== srch) { e.preventDefault(); bSrch.click(); }
 });
 
-// ── Draggable divider ──────────────────────────────────────────────────────
-const dvdr = $('dvdr'), ws = $('ws'), ipanel = $('ipanel'), opanel = $('opanel');
-let dragging=false, dragX=0, dragW=0;
-
-dvdr.addEventListener('mousedown', e => {
-  dragging=true; dragX=e.clientX;
-  dragW = ipanel.getBoundingClientRect().width;
-  dvdr.classList.add('drag');
-  document.body.style.cursor='col-resize';
-  document.body.style.userSelect='none';
-});
-document.addEventListener('mousemove', e => {
-  if (!dragging) return;
-  const total = ws.getBoundingClientRect().width - 4;
-  const nw = Math.max(180, Math.min(dragW + e.clientX - dragX, total - 180));
-  ipanel.style.flex='none'; ipanel.style.width=(nw/total*100).toFixed(2)+'%';
-  opanel.style.flex='1';
-});
-document.addEventListener('mouseup', () => {
-  if (dragging) { dragging=false; dvdr.classList.remove('drag'); document.body.style.cursor=''; document.body.style.userSelect=''; }
-});
-
 // ── Init ───────────────────────────────────────────────────────────────────
 updateLns();
 updateStats();
@@ -843,7 +703,7 @@ sampleBtn.textContent = '⌥ Load Sample';
 sampleBtn.addEventListener('click', () => {
   inp.value = JSON.stringify({
     "name": "JSON Parser","version":"1.0.0",
-    "features":["parse","format","compact","search","tree view"],
+    "features":["parse","format","compact","search"],
     "config":{"indent":2,"theme":"dark","autoValidate":true},
     "author":{"name":"Scott","email":"scottqglobal@gmail.com"},
     "stats":{"users":1024,"requests":99999,"uptime":99.9},

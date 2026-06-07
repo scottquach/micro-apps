@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Micro App Shell</title>
+  <link rel="stylesheet" href="common/index.css">
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      min-width: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .brand {
+      padding: 18px 18px 16px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      gap: 7px;
+    }
+
+    .brand h1 {
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      color: var(--text-dim);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .app-select-wrap {
+      display: none;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .app-select {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      background: var(--surface2);
+      color: var(--text);
+      padding: 0 10px;
+      outline: none;
+    }
+
+    .app-select:focus {
+      border-color: rgba(196, 150, 78, 0.55);
+    }
+
+    .app-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .app-item {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: var(--r);
+      background: transparent;
+      color: var(--text-dim);
+      display: grid;
+      gap: 5px;
+      padding: 11px 12px;
+      text-align: left;
+      transition: background var(--t), border-color var(--t), color var(--t);
+    }
+
+    .app-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .app-item.active {
+      background: var(--accent-dim);
+      border-color: rgba(196, 150, 78, 0.36);
+      color: var(--text);
+    }
+
+    .app-name {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .app-desc {
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .app-item.active .app-desc {
+      color: var(--text-dim);
+    }
+
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .toolbar {
+      min-height: 42px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      flex-shrink: 0;
+    }
+
+    .current-app {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .current-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .current-path {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .open-link {
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      color: var(--text-dim);
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 10px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background var(--t), color var(--t);
+    }
+
+    .open-link:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+
+    .app-frame {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      border: 0;
+      flex: 1;
+      background: var(--bg);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        padding: 12px 14px;
+      }
+
+      .app-select-wrap {
+        display: block;
+      }
+
+      .app-list {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Micro Apps</h1>
+      <p>Select a utility and keep it embedded in this shell.</p>
+    </div>
+
+    <div class="app-select-wrap">
+      <select id="app-select" class="app-select" aria-label="Select micro app"></select>
+    </div>
+
+    <nav id="app-list" class="app-list" aria-label="Micro apps"></nav>
+  </aside>
+
+  <main class="workspace">
+    <header class="toolbar">
+      <div class="current-app">
+        <div id="current-title" class="current-title"></div>
+        <div id="current-path" class="current-path"></div>
+      </div>
+      <a id="open-link" class="open-link" href="#" target="_blank" rel="noopener">Open</a>
+    </header>
+    <iframe id="app-frame" class="app-frame" title="Selected micro app"></iframe>
+  </main>
+
+  <script>
+    const apps = [
+      {
+        id: "promotion",
+        name: "Promotion Mockup",
+        path: "promotion_mockup.html",
+        description: "Build social promotion images from uploaded screenshots."
+      },
+      {
+        id: "timestamp",
+        name: "Timestamp Converter",
+        path: "timestamp_converter.html",
+        description: "Convert timestamps across UTC, local time, RFC, and Unix formats."
+      },
+      {
+        id: "json",
+        name: "JSON Parser",
+        path: "json-parser.html",
+        description: "Format, validate, inspect, and transform JSON."
+      }
+    ];
+
+    const appList = document.getElementById("app-list");
+    const appSelect = document.getElementById("app-select");
+    const appFrame = document.getElementById("app-frame");
+    const currentTitle = document.getElementById("current-title");
+    const currentPath = document.getElementById("current-path");
+    const openLink = document.getElementById("open-link");
+
+    function renderAppList() {
+      appList.innerHTML = "";
+      appSelect.innerHTML = "";
+
+      apps.forEach((app) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "app-item";
+        button.dataset.appId = app.id;
+        button.innerHTML = `
+          <span class="app-name">${app.name}</span>
+          <span class="app-desc">${app.description}</span>
+        `;
+        button.addEventListener("click", () => selectApp(app.id));
+        appList.appendChild(button);
+
+        const option = document.createElement("option");
+        option.value = app.id;
+        option.textContent = app.name;
+        appSelect.appendChild(option);
+      });
+    }
+
+    function selectApp(appId, updateHash = true) {
+      const app = apps.find((item) => item.id === appId) || apps[0];
+
+      appFrame.src = app.path;
+      appFrame.title = app.name;
+      currentTitle.textContent = app.name;
+      currentPath.textContent = app.path;
+      openLink.href = app.path;
+      appSelect.value = app.id;
+
+      document.querySelectorAll(".app-item").forEach((item) => {
+        const active = item.dataset.appId === app.id;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-current", active ? "page" : "false");
+      });
+
+      if (updateHash) {
+        history.replaceState(null, "", `#${app.id}`);
+      }
+    }
+
+    appSelect.addEventListener("change", (event) => {
+      selectApp(event.target.value);
+    });
+
+    window.addEventListener("hashchange", () => {
+      selectApp(location.hash.slice(1), false);
+    });
+
+    renderAppList();
+    selectApp(location.hash.slice(1) || apps[0].id, false);
+  </script>
+</body>
+</html>
