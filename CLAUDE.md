@@ -1,0 +1,1 @@
+Micro apps are fully encapsulated HTML files
