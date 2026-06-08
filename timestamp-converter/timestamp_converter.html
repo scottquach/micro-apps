@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timestamp Converter</title>
-  <link rel="stylesheet" href="common/index.css">
+  <link rel="stylesheet" href="../common/index.css">
   <style>
     html, body { height: 100%; overflow: hidden; }
 
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 228px minmax(0, 1fr);
     }
 
     .app {
       width: 100%;
       max-width: 1600px;
+      justify-self: center;
       height: 100%;
       display: grid;
       grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
@@ -53,16 +53,6 @@
       min-height: 0;
       overflow: hidden;
       background: var(--surface);
-    }
-
-    .title-mark {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      color: var(--accent);
-      font-weight: 700;
-      line-height: 1;
-      text-transform: none;
-      letter-spacing: 0;
     }
 
     .counter {
@@ -305,7 +295,7 @@
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.1em;
       display: flex;
       align-items: center;
       background: rgba(255,255,255,.01);
@@ -352,6 +342,8 @@
 
     @media (max-width: 860px) {
       html, body { overflow: auto; }
+      body { display: block; }
+      .app-info { display: none; }
       .app {
         min-height: 100vh;
         height: auto;
@@ -372,13 +364,24 @@
   </style>
 </head>
 <body>
+  <aside class="app-info">
+    <a href="../index.html" class="app-info-back">← Home</a>
+    <div class="app-info-name">
+      <span class="app-info-mark">TS</span>
+      Timestamp Converter
+    </div>
+    <p class="app-info-desc">Convert timestamps across UTC, local time, RFC, and Unix formats.</p>
+    <div class="app-info-sep"></div>
+    <ul class="app-info-hints">
+      <li>One timestamp per line. Mixed formats are supported.</li>
+      <li>Delta shows elapsed time between each valid entry.</li>
+    </ul>
+  </aside>
+
   <main class="app">
     <section class="panel input-panel" aria-label="Timestamp input">
       <div class="ph">
-        <span style="display:flex;align-items:center;gap:8px">
-          <span class="title-mark">TS</span>
-          <span>Timestamp Converter</span>
-        </span>
+        <span>Input</span>
         <span class="counter" id="line-counter" style="text-transform:none;letter-spacing:0">0 lines</span>
       </div>
 
@@ -653,10 +656,7 @@
 
         const source = document.createElement("div");
         source.className = "source";
-        source.innerHTML = `
-          <div class="source-label">Line ${line.index}</div>
-          <div class="source-value"></div>
-        `;
+        source.innerHTML = `<div class="source-value"></div>`;
         source.querySelector(".source-value").textContent = line.value;
 
         const detected = document.createElement("div");

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JSON Parser</title>
-<link rel="stylesheet" href="common/index.css">
+<link rel="stylesheet" href="../common/index.css">
 <style>
 :root {
   --jk:    #8eb4cc;
@@ -18,17 +18,16 @@
 html,body{height:100%;overflow:hidden}
 
 body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 228px minmax(0, 1fr);
 }
 
 .frame {
   width: 100%;
   max-width: 1600px;
+  justify-self: center;
   display: flex;
   flex-direction: column;
-  flex: 1;
   min-height: 0;
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
@@ -66,6 +65,7 @@ body {
   transition:color var(--t);
 }
 .isel:hover{color:var(--text)}
+.isel:focus{outline:none;border-color:rgba(196,150,78,.5)}
 .isel option{background:var(--surface2)}
 
 /* ── Workspace ── */
@@ -87,6 +87,7 @@ body {
 
 /* ── Editor ── */
 .ed-wrap{flex:1;display:flex;overflow:hidden;position:relative}
+.ed-wrap:focus-within{outline:1px solid rgba(196,150,78,.3);outline-offset:-1px}
 
 .lns {
   flex-shrink:0;width:42px;
@@ -131,7 +132,7 @@ body {
 }
 .err-panel.on{display:flex;align-items:flex-start}
 .err-icon{color:var(--error);font-size:13px;flex-shrink:0;margin-top:1px}
-.err-title{font-size:10px;font-weight:700;color:var(--error);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.err-title{font-size:10px;font-weight:700;color:var(--error);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px}
 .err-msg{font-family:var(--font-mono);font-size:11px;color:rgba(192,120,120,.75)}
 .err-loc{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:2px}
 
@@ -201,7 +202,7 @@ body {
 }
 .stats{display:flex;gap:16px}
 .stat{display:flex;align-items:center;gap:4px}
-.stat-lbl{color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-size:10px}
+.stat-lbl{color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-size:10px;font-weight:700}
 .stat-val{color:var(--text-dim);font-family:var(--font-mono)}
 
 /* ── Empty state ── */
@@ -229,6 +230,22 @@ body {
 </head>
 <body>
 
+<aside class="app-info">
+  <a href="../index.html" class="app-info-back">← Home</a>
+  <div class="app-info-name">
+    <span class="app-info-mark">{}</span>
+    JSON Parser
+  </div>
+  <p class="app-info-desc">Format, validate, and inspect JSON data.</p>
+  <div class="app-info-sep"></div>
+  <ul class="app-info-hints">
+    <li>Paste JSON to auto-validate.</li>
+    <li>Format to pretty-print, Compact to minify.</li>
+    <li>Stringify wraps JSON as an escaped string literal.</li>
+    <li>Ctrl+F to search keys and values.</li>
+  </ul>
+</aside>
+
 <div class="frame">
 
 <!-- Workspace -->
@@ -236,10 +253,7 @@ body {
   <!-- Input panel -->
   <div class="panel inp-panel" id="ipanel">
     <div class="ph">
-      <span style="display:flex;align-items:center;gap:8px">
-        <span style="font-family:var(--font-mono);font-size:16px;color:var(--accent);font-weight:700;line-height:1;text-transform:none;letter-spacing:0">{}</span>
-        <span>JSON Parser</span>
-      </span>
+      <span>Input</span>
     </div>
     <div class="ed-wrap">
       <div class="lns" id="lns"></div>
