@@ -9,13 +9,14 @@
     html, body { min-height: 100%; }
 
     body {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: 228px minmax(0, 1fr);
     }
 
     .app {
       width: 100%;
       max-width: 1600px;
+      justify-self: center;
       min-height: 100vh;
       display: grid;
       grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
@@ -24,17 +25,7 @@
       background: var(--surface);
     }
 
-    .ph { height: 30px; }
-
-    .title-mark {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      color: var(--accent);
-      font-weight: 700;
-      line-height: 1;
-      text-transform: none;
-      letter-spacing: 0;
-    }
+    .ph { height: 36px; }
 
     .side {
       border-right: 1px solid var(--border);
@@ -144,7 +135,7 @@
 
     .preview-fill {
       height: 112px;
-      background: #c4964e;
+      background: var(--accent);
     }
 
     .preview-meta {
@@ -176,33 +167,6 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 30px;
-      padding: 6px 10px;
-      border: 1px solid var(--border2);
-      border-radius: var(--r);
-      background: transparent;
-      color: var(--text-dim);
-      font-size: 12px;
-      font-weight: 500;
-      transition: background var(--t), color var(--t), border-color var(--t);
-      white-space: nowrap;
-    }
-
-    .btn:hover {
-      background: var(--surface3);
-      color: var(--text);
-    }
-
-    .btn-hi {
-      background: var(--accent-dim);
-      border-color: rgba(196,150,78,.35);
-      color: var(--accent);
     }
 
     .section {
@@ -348,6 +312,14 @@
     }
 
     @media (max-width: 900px) {
+      body {
+        display: block;
+      }
+
+      .app-info {
+        display: none;
+      }
+
       .app {
         grid-template-columns: 1fr;
       }
@@ -365,13 +337,25 @@
   </style>
 </head>
 <body>
+  <aside class="app-info">
+    <a href="../index.html" class="app-info-back">← Home</a>
+    <div class="app-info-name">
+      <span class="app-info-mark">#</span>
+      Color Toolkit
+    </div>
+    <p class="app-info-desc">Convert colors, generate palettes, and check contrast from pasted color values.</p>
+    <div class="app-info-sep"></div>
+    <ul class="app-info-hints">
+      <li>Paste HEX, RGB/RGBA, or HSL/HSLA into the color field.</li>
+      <li>Typed formats stay editable while equivalents update below.</li>
+      <li>Use contrast inputs to test foreground and background pairs.</li>
+    </ul>
+  </aside>
+
   <main class="app">
     <aside class="panel side" aria-label="Color input and formats">
       <div class="ph">
-        <span style="display:flex;align-items:center;gap:8px">
-          <span class="title-mark">#</span>
-          <span>Color Toolkit</span>
-        </span>
+        <span>Input</span>
       </div>
 
       <div class="side-body">

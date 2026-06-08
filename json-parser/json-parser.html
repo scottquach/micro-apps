@@ -35,15 +35,15 @@ body {
 
 .validity {
   padding:3px 10px;border-radius:var(--r);
-  font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
-  transition:all var(--t);
+  font-size:10px;line-height:1;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  transition:background var(--t),color var(--t),border-color var(--t);
 }
 .validity.empty{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
 .validity.valid{background:rgba(120,168,142,.10);color:var(--success);border:1px solid rgba(120,168,142,.28)}
 .validity.invalid{background:rgba(192,120,120,.10);color:var(--error);border:1px solid rgba(192,120,120,.28)}
 
 /* ── Shared panel header ── */
-.ph { height: 30px; } /* enforce fixed height — overrides min-height from common.css */
+.ph { height: 36px; }
 
 .btn {
   display:inline-flex;align-items:center;gap:6px;

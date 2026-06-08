@@ -1,39 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Promotion Mockup</title>
+  <link rel="stylesheet" href="../common/index.css">
   <style>
-/* ======================
-   Reset & Base
-   ====================== */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+html, body { height: 100%; overflow: hidden; }
 
 body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #0f0f0f;
-  color: #e0e0e0;
-  overflow: hidden;
-  height: 100vh;
+  display: grid;
+  grid-template-columns: 228px minmax(0, 1fr);
 }
 
-/* ======================
-   Layout
-   ====================== */
+.ph { height: 36px; }
+
 .app {
+  width: 100%;
+  max-width: 1600px;
+  justify-self: center;
+  height: 100%;
   display: flex;
-  height: 100vh;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .preview-panel {
   flex: 1;
-  background: #1a1a1a;
+  background: var(--preview, var(--surface2));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,173 +51,113 @@ body {
 }
 
 .controls-panel {
-  width: 340px;
-  background: #141414;
-  border-left: 1px solid #222;
-  overflow-y: auto;
-  padding: 20px;
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-/* ======================
-   Controls
-   ====================== */
-.app-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 16px 0;
+.controls-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .control-section {
-  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.section-title {
-  font-size: 11px;
-  font-weight: 600;
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #888;
-  margin: 0 0 8px 0;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
 }
 
 input[type="text"],
-input[type="number"],
-textarea {
+input[type="number"] {
   width: 100%;
-  padding: 10px 12px;
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 6px;
-  color: #e0e0e0;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  color: var(--text);
   font-size: 13px;
-  font-family: inherit;
   outline: none;
 }
 
 input[type="text"]:focus,
-input[type="number"]:focus,
-textarea:focus {
-  border-color: #667eea;
+input[type="number"]:focus {
+  border-color: rgba(196, 150, 78, 0.5);
 }
 
 select {
   width: 100%;
-  padding: 10px 12px;
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 6px;
-  color: #e0e0e0;
+  padding: 8px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  color: var(--text);
   font-size: 13px;
-  font-family: inherit;
   outline: none;
   appearance: auto;
 }
 
-select:focus {
-  border-color: #667eea;
-}
+select option { background: var(--surface2); }
+select:focus { border-color: rgba(196, 150, 78, 0.5); }
 
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
+#upload-btn { width: 100%; }
 
-#upload-btn {
-  width: 100%;
-  padding: 10px;
-  background: #333;
-  color: #e0e0e0;
-  border: 1px solid #444;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;
-}
-
-#upload-btn:hover {
-  background: #3d3d3d;
-  border-color: #555;
-}
-
-#status-text {
+.status-text {
   display: block;
   font-size: 12px;
-  margin-top: 6px;
   min-height: 18px;
+  color: var(--text-muted);
 }
 
-.status-text.error {
-  color: #f87171;
-}
+.status-text.error { color: var(--error); }
+.status-text.success { color: var(--success); }
 
-.status-text.success {
-  color: #4ade80;
-}
-
-/* ======================
-   Preset Buttons
-   ====================== */
 .preset-buttons {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.preset-buttons button {
-  padding: 6px 12px;
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 16px;
-  color: #aaa;
-  font-size: 12px;
+.preset-buttons .btn.active {
+  background: var(--accent-dim);
+  border-color: rgba(196, 150, 78, .35);
+  color: var(--accent);
 }
 
-.preset-buttons button:hover {
-  border-color: #555;
-}
-
-.preset-buttons button.active {
-  background: #667eea;
-  border-color: #667eea;
-  color: white;
-}
-
-/* ======================
-   Gradient Swatches
-   ====================== */
 .gradient-swatches {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .gradient-swatches .swatch {
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   border: 2px solid transparent;
-  transition: border-color 0.15s;
+  transition: border-color var(--t);
 }
 
-.gradient-swatches .swatch:hover {
-  border-color: #555;
-}
+.gradient-swatches .swatch:hover { border-color: var(--border2); }
+.gradient-swatches .swatch.active { border-color: var(--text); }
 
-.gradient-swatches .swatch.active {
-  border-color: #fff;
-}
-
-/* ======================
-   Color Pickers
-   ====================== */
 .color-pickers {
   display: flex;
   gap: 12px;
-  margin-bottom: 8px;
 }
 
 .color-pickers label {
@@ -230,26 +165,34 @@ button {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #888;
+  color: var(--text-dim);
 }
 
 .color-pickers input[type="color"] {
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r);
   cursor: pointer;
   background: none;
+  padding: 0;
 }
 
-/* ======================
-   Text Options
-   ====================== */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.checkbox-label input { accent-color: var(--accent); }
+
 .text-options {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 8px;
 }
 
 .text-options label {
@@ -257,119 +200,92 @@ button {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #888;
+  color: var(--text-dim);
 }
 
-.size-toggles {
-  display: flex;
-  gap: 4px;
-}
+.size-toggles { display: flex; gap: 4px; }
 
-.size-toggles button {
+.size-toggles .btn {
   width: 32px;
-  height: 28px;
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 4px;
-  color: #aaa;
+  min-height: 28px;
+  padding: 4px;
   font-size: 11px;
   font-weight: 600;
 }
 
-.size-toggles button:hover {
-  border-color: #555;
+.size-toggles .btn.active {
+  background: var(--accent-dim);
+  border-color: rgba(196, 150, 78, .35);
+  color: var(--accent);
 }
 
-.size-toggles button.active {
-  background: #667eea;
-  border-color: #667eea;
-  color: white;
-}
-
-/* ======================
-   Sliders
-   ====================== */
 .slider-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 4px;
+  gap: 10px;
 }
 
 .slider-row label {
   font-size: 12px;
-  color: #888;
+  color: var(--text-dim);
   min-width: 90px;
 }
 
 .slider-row input[type="range"] {
   flex: 1;
-  accent-color: #667eea;
+  accent-color: var(--accent);
 }
 
 .slider-row span {
   font-size: 12px;
-  color: #aaa;
+  color: var(--text-dim);
   min-width: 28px;
   text-align: right;
 }
 
-/* ======================
-   Checkbox
-   ====================== */
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  color: #ccc;
-}
-
-/* ======================
-   Download Button
-   ====================== */
-.download-btn {
+#download-btn {
   width: 100%;
-  padding: 12px;
-  background: #22c55e;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  min-height: 36px;
   font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
-  margin-top: auto;
-}
-
-.download-btn:hover {
-  background: #16a34a;
-}
-
-/* ======================
-   Utility
-   ====================== */
-.control-section input[type="text"] + input[type="text"] {
-  margin-top: 8px;
 }
 
 #custom-size-inputs {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
 }
 
-#custom-size-inputs.hidden {
-  display: none;
-}
+#custom-size-inputs.hidden { display: none; }
+.hidden { display: none; }
 
-.hidden {
-  display: none;
+@media (max-width: 860px) {
+  html, body { overflow: auto; }
+  body { display: block; }
+  .app-info { display: none; }
+  .app { height: auto; min-height: 100vh; flex-direction: column; }
+  .preview-panel { min-height: 50vw; }
+  .controls-panel { width: 100%; border-left: none; border-top: 1px solid var(--border); }
 }
   </style>
 </head>
 <body>
-  <div class="app">
+  <aside class="app-info">
+    <a href="../index.html" class="app-info-back">← Home</a>
+    <div class="app-info-name">
+      <span class="app-info-mark">↗</span>
+      Promotion Mockup
+    </div>
+    <p class="app-info-desc">Create polished social media share images with browser frame mockups.</p>
+    <div class="app-info-sep"></div>
+    <ul class="app-info-hints">
+      <li>Upload a screenshot to preview inside the browser frame.</li>
+      <li>Pick a size preset for your target platform.</li>
+      <li>Customize the background, text, and styling.</li>
+      <li>Download as PNG when ready.</li>
+    </ul>
+  </aside>
+
+  <main class="app">
     <div class="preview-panel">
       <div class="canvas-container">
         <canvas id="preview-canvas"></canvas>
@@ -377,104 +293,107 @@ button {
     </div>
 
     <div class="controls-panel">
-      <h1 class="app-title">Social Share Utility</h1>
+      <div class="ph">Controls</div>
+      <div class="controls-body">
 
-      <div class="control-section">
-        <h3 class="section-title">Image</h3>
-        <input id="upload-input" type="file" accept="image/*" class="hidden">
-        <button id="upload-btn">Upload Image</button>
-        <span id="status-text" class="status-text"></span>
-      </div>
-
-      <div class="control-section">
-        <h3 class="section-title">Size Preset</h3>
-        <div class="preset-buttons">
-          <button data-width="1200" data-height="675">Twitter</button>
-          <button data-width="1080" data-height="1080">Square</button>
-          <button data-width="1200" data-height="627">LinkedIn</button>
-          <button data-width="1080" data-height="1350">Threads</button>
-          <button>Custom</button>
+        <div class="control-section">
+          <div class="section-label">Image</div>
+          <input id="upload-input" type="file" accept="image/*" class="hidden">
+          <button id="upload-btn" class="btn">Upload Image</button>
+          <span id="status-text" class="status-text"></span>
         </div>
-        <div id="custom-size-inputs" class="hidden">
-          <input id="custom-width" type="number" value="1200">
-          <input id="custom-height" type="number" value="675">
-        </div>
-      </div>
 
-      <div class="control-section">
-        <h3 class="section-title">Background</h3>
-        <div id="gradient-swatches" class="gradient-swatches"></div>
-        <div class="color-pickers">
-          <label>
-            Color 1
-            <input id="bg-color1" type="color" value="#667eea">
-          </label>
-          <label>
-            Color 2
-            <input id="bg-color2" type="color" value="#764ba2">
-          </label>
-        </div>
-        <select id="bg-mode">
-          <option value="gradient">Gradient</option>
-          <option value="solid">Solid</option>
-        </select>
-      </div>
-
-      <div class="control-section">
-        <h3 class="section-title">Browser Frame</h3>
-        <label class="checkbox-label">
-          <input id="frame-toggle" type="checkbox" checked>
-          Show browser frame
-        </label>
-        <select id="frame-theme">
-          <option value="dark">Dark</option>
-          <option value="light">Light</option>
-        </select>
-      </div>
-
-      <div class="control-section">
-        <h3 class="section-title">Text</h3>
-        <input id="title-input" type="text" placeholder="Enter title...">
-        <input id="subtitle-input" type="text" placeholder="Enter subtitle...">
-        <div class="text-options">
-          <label>
-            Color
-            <input id="text-color" type="color" value="#ffffff">
-          </label>
-          <div class="size-toggles">
-            <button data-size="S">S</button>
-            <button data-size="M" class="active">M</button>
-            <button data-size="L">L</button>
+        <div class="control-section">
+          <div class="section-label">Size Preset</div>
+          <div class="preset-buttons">
+            <button class="btn" data-width="1200" data-height="675">Twitter</button>
+            <button class="btn" data-width="1080" data-height="1080">Square</button>
+            <button class="btn" data-width="1200" data-height="627">LinkedIn</button>
+            <button class="btn" data-width="1080" data-height="1350">Threads</button>
+            <button class="btn">Custom</button>
+          </div>
+          <div id="custom-size-inputs" class="hidden">
+            <input id="custom-width" type="number" value="1200">
+            <input id="custom-height" type="number" value="675">
           </div>
         </div>
-        <div class="slider-row">
-          <label>Title Gap</label>
-          <input id="title-gap-slider" type="range" min="0" max="80" value="8">
-          <span id="title-gap-value">8</span>
-        </div>
-      </div>
 
-      <div class="control-section">
-        <h3 class="section-title">Styling</h3>
-        <div class="slider-row">
-          <label>Padding</label>
-          <input id="padding-slider" type="range" min="20" max="120" value="60">
-          <span id="padding-value">60</span>
+        <div class="control-section">
+          <div class="section-label">Background</div>
+          <div id="gradient-swatches" class="gradient-swatches"></div>
+          <div class="color-pickers">
+            <label>
+              Color 1
+              <input id="bg-color1" type="color" value="#667eea">
+            </label>
+            <label>
+              Color 2
+              <input id="bg-color2" type="color" value="#764ba2">
+            </label>
+          </div>
+          <select id="bg-mode">
+            <option value="gradient">Gradient</option>
+            <option value="solid">Solid</option>
+          </select>
         </div>
-        <div class="slider-row">
-          <label>Corner Radius</label>
-          <input id="radius-slider" type="range" min="0" max="24" value="12">
-          <span id="radius-value">12</span>
-        </div>
-        <label class="checkbox-label">
-          <input id="shadow-toggle" type="checkbox" checked>
-          Drop shadow
-        </label>
-      </div>
 
-      <button id="download-btn" class="download-btn">Download PNG</button>
+        <div class="control-section">
+          <div class="section-label">Browser Frame</div>
+          <label class="checkbox-label">
+            <input id="frame-toggle" type="checkbox" checked>
+            Show browser frame
+          </label>
+          <select id="frame-theme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+
+        <div class="control-section">
+          <div class="section-label">Text</div>
+          <input id="title-input" type="text" placeholder="Enter title...">
+          <input id="subtitle-input" type="text" placeholder="Enter subtitle...">
+          <div class="text-options">
+            <label>
+              Color
+              <input id="text-color" type="color" value="#ffffff">
+            </label>
+            <div class="size-toggles">
+              <button class="btn" data-size="S">S</button>
+              <button class="btn active" data-size="M">M</button>
+              <button class="btn" data-size="L">L</button>
+            </div>
+          </div>
+          <div class="slider-row">
+            <label>Title Gap</label>
+            <input id="title-gap-slider" type="range" min="0" max="80" value="8">
+            <span id="title-gap-value">8</span>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-label">Styling</div>
+          <div class="slider-row">
+            <label>Padding</label>
+            <input id="padding-slider" type="range" min="20" max="120" value="60">
+            <span id="padding-value">60</span>
+          </div>
+          <div class="slider-row">
+            <label>Corner Radius</label>
+            <input id="radius-slider" type="range" min="0" max="24" value="12">
+            <span id="radius-value">12</span>
+          </div>
+          <label class="checkbox-label">
+            <input id="shadow-toggle" type="checkbox" checked>
+            Drop shadow
+          </label>
+        </div>
+
+        <button id="download-btn" class="btn btn-hi">Download PNG</button>
+      </div>
     </div>
-  </div>
+  </main>
+
   <script>
 // State
 const state = {
@@ -992,6 +911,6 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-</script>
+  </script>
 </body>
 </html>

@@ -35,7 +35,7 @@ Defined in `common/index.css`. App-specific layout stays inline in each file's `
 
 **`.panel`** — Flex column, `overflow: hidden`, `min-width: 0`. Use on every major panel section.
 
-**`.ph`** — 30 px panel header bar (`--surface2` bg, bottom border). Title on the left, optional action on the right. Override `text-transform`/`letter-spacing`/`font-size` inline when the default all-caps label style doesn't fit.
+**`.ph`** — 36 px panel header bar (`--surface2` bg, bottom border). Title on the left, optional action on the right. Override `text-transform`/`letter-spacing`/`font-size` inline when the default all-caps label style doesn't fit. Badge/pill elements inside a `.ph` must set `line-height: 1` to prevent browser font metrics from inflating their height past the header bounds.
 
 **`.btn` / `.btn-hi`** — Ghost button (`--border2` border, transparent bg). `.btn-hi` is the accent variant for the primary action.
 
@@ -81,7 +81,7 @@ Copy the structure from an existing app (e.g. `base64-codec/base64-codec.html`) 
 - [ ] `body` grid: `228px minmax(0, 1fr)`
 - [ ] `.app-info` sidebar with back link, mark, name, description, sep, hints
 - [ ] App container: `max-width: 1600px; justify-self: center; border-left/right`
-- [ ] `.ph { height: 30px }` override in local styles
+- [ ] `.ph { height: 36px }` override in local styles (common.css sets `min-height: 36px`; override to hard-fix height and prevent content from inflating it)
 - [ ] All inputs have accent focus ring
 - [ ] Labels follow the label convention above
 - [ ] Mobile breakpoint: `body { display: block }`, `.app-info { display: none }`, app grid collapses to `1fr`
