@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Micro Apps</title>
   <link rel="stylesheet" href="common/index.css">
+  <script src="common/site-config.js" defer></script>
+  <script src="common/analytics.js" defer></script>
+  <script>
+    !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+    posthog.init('phc_6ywY9gC6relumCNAKBCPkGdCsX19I3fO60BkXdKoOZM', {
+      api_host: 'https://us.i.posthog.com', disable_session_recording: true, defaults: '2026-01-30'
+    })
+  </script>
 </head>
+
 <body class="dir-body">
 
   <aside class="dir-info">
@@ -16,7 +26,7 @@
 
     <ul class="dir-lines">
       <li>No sign-up required.</li>
-      <li>No data collected.</li>
+      <li>Tool inputs stay in your browser.</li>
       <li>No unnecessary features.</li>
     </ul>
 
@@ -26,6 +36,7 @@
 
     <div class="dir-footer">
       <div>By Scott Quach</div>
+      <div><a href="privacy.html">Privacy</a></div>
       <div id="last-updated"></div>
     </div>
   </aside>
@@ -42,7 +53,7 @@
         icon: "🖼️",
         tag: "Design",
         name: "Promotion Mockup",
-        path: "promotion-mockup/promotion_mockup.html",
+        path: "apps/promotion-mockup/promotion_mockup.html",
         description: "Build social promotion images from uploaded screenshots."
       },
       {
@@ -50,7 +61,7 @@
         icon: "🕐",
         tag: "Utility",
         name: "Timestamp Converter",
-        path: "timestamp-converter/timestamp_converter.html",
+        path: "apps/timestamp-converter/timestamp_converter.html",
         description: "Convert timestamps across UTC, local time, RFC, and Unix formats."
       },
       {
@@ -58,7 +69,7 @@
         icon: "{ }",
         tag: "Dev",
         name: "JSON Parser",
-        path: "json-parser/json-parser.html",
+        path: "apps/json-parser/json-parser.html",
         description: "Format, validate, inspect, and transform JSON."
       },
       {
@@ -66,7 +77,7 @@
         icon: "64",
         tag: "Dev",
         name: "Base64 Codec",
-        path: "base64-codec/base64-codec.html",
+        path: "apps/base64-codec/base64-codec.html",
         description: "Encode and decode Base64, URL-safe Base64, and Unicode text."
       },
       {
@@ -74,7 +85,7 @@
         icon: "#",
         tag: "Design",
         name: "Color Toolkit",
-        path: "color-toolkit/color-toolkit.html",
+        path: "apps/color-toolkit/color-toolkit.html",
         description: "Convert colors, generate tints and shades, and check contrast."
       }
     ];
@@ -83,8 +94,8 @@
     let activeCategory = "All";
 
     const filtersEl = document.getElementById("filters");
-    const gridEl    = document.getElementById("card-grid");
-    const emptyEl   = document.getElementById("empty-state");
+    const gridEl = document.getElementById("card-grid");
+    const emptyEl = document.getElementById("empty-state");
     const updatedEl = document.getElementById("last-updated");
 
     updatedEl.textContent = "Last updated " + new Date().toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
@@ -143,4 +154,5 @@
     renderGrid();
   </script>
 </body>
+
 </html>

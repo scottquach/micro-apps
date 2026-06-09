@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy - Micro Apps</title>
+  <link rel="stylesheet" href="common/index.css">
+  <script src="common/site-config.js" defer></script>
+  <script src="common/analytics.js" defer></script>
+  <style>
+    body {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .privacy-main {
+      max-width: 760px;
+      width: 100%;
+      padding: 48px 32px;
+      border-left: 1px solid var(--border);
+    }
+
+    .privacy-main h1 {
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+    }
+
+    .privacy-main h2 {
+      font-size: 13px;
+      margin: 28px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .privacy-main p,
+    .privacy-main li {
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .privacy-main ul {
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .privacy-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 680px) {
+      body {
+        display: block;
+      }
+
+      .privacy-main {
+        border-left: 0;
+        padding: 28px 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="dir-info">
+    <h1>Micro Apps</h1>
+    <p class="dir-sub">Privacy</p>
+    <p class="dir-desc">Single-purpose utilities built for speed and focus.</p>
+    <a href="index.html" class="app-info-back">Back home</a>
+  </aside>
+
+  <main class="privacy-main">
+    <h1>Privacy</h1>
+    <p>Tool inputs and outputs stay in your browser. Do not send sensitive content through these utilities unless you
+      are comfortable handling it on your own device.</p>
+
+    <h2>Analytics</h2>
+    <p>This project can use PostHog to understand which tools are opened and whether common UI actions work. Analytics
+      are disabled in the open-source config until a deployment owner enables them.</p>
+    <ul>
+      <li>Captured: page path, document title, app name, and explicit usage events.</li>
+      <li>Not captured: pasted text, uploaded files, generated output, JSON payloads, Base64 values, or color inputs.
+      </li>
+      <li>Session replay and automatic click/input capture are disabled.</li>
+    </ul>
+
+    <div class="privacy-actions">
+      <button class="btn btn-hi" id="opt-out" type="button">Opt out</button>
+      <button class="btn" id="opt-in" type="button">Opt in</button>
+    </div>
+  </main>
+
+</body>
+
+</html>

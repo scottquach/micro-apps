@@ -5,9 +5,12 @@
 | File | Purpose |
 |------|---------|
 | `common/index.css` | Design tokens, resets, shared component classes, directory page styles |
-| `<app>/<app>.html` | App-specific styles inline in a `<style>` block |
+| `common/site-config.js` | Deploy-time config for analytics and future shared runtime features |
+| `common/analytics.js` | Shared PostHog loader used by the directory and micro apps |
+| `apps/<app>/<app>.html` | App-specific styles inline in a `<style>` block |
 
-Sub-apps live one level deep, so the CSS link must be `../common/index.css`.
+Sub-apps live under `apps/`, so the CSS link must be `../../common/index.css`.
+Shared scripts should be loaded from sub-apps as `../../common/site-config.js` and `../../common/analytics.js`.
 
 ---
 
@@ -74,10 +77,11 @@ Defined in `common/index.css`. App-specific layout stays inline in each file's `
 
 ## New micro app checklist
 
-Copy the structure from an existing app (e.g. `base64-codec/base64-codec.html`) and update:
+Copy the structure from an existing app (e.g. `apps/base64-codec/base64-codec.html`) and update:
 
 - [ ] `class="light"` on `<html>`
-- [ ] `../common/index.css` linked
+- [ ] `../../common/index.css` linked
+- [ ] `../../common/site-config.js` and `../../common/analytics.js` loaded with `defer`
 - [ ] `body` grid: `228px minmax(0, 1fr)`
 - [ ] `.app-info` sidebar with back link, mark, name, description, sep, hints
 - [ ] App container: `max-width: 1600px; justify-self: center; border-left/right`
